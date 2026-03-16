@@ -221,7 +221,8 @@ def assign_materials():
         "FloorMaterial": ((0.9, 0.9, 0.9, 1), 0.8),
         "WallMaterial": ((0.95, 0.95, 0.95, 1), 0.6),
         "LineMaterial": ((0.1, 0.1, 0.1, 1), 0.5),
-        "GoalMaterial": ((0.8, 0.2, 0.2, 1), 0.5),
+        "GoalRedMaterial": ((0.85, 0.15, 0.15, 1), 0.4),
+        "GoalBlueMaterial": ((0.15, 0.25, 0.85, 1), 0.4),
     }
 
     created = {}
@@ -240,8 +241,10 @@ def assign_materials():
             obj.data.materials.append(created["FloorMaterial"])
         elif "Wall" in obj.name:
             obj.data.materials.append(created["WallMaterial"])
-        elif "Goal" in obj.name:
-            obj.data.materials.append(created["GoalMaterial"])
+        elif "GoalR" in obj.name:
+            obj.data.materials.append(created["GoalRedMaterial"])
+        elif "GoalL" in obj.name:
+            obj.data.materials.append(created["GoalBlueMaterial"])
         elif "Line" in obj.name or "Circle" in obj.name:
             obj.data.materials.append(created["LineMaterial"])
 

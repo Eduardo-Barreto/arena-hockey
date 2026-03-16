@@ -4,42 +4,46 @@
 [ext_resource type="PackedScene" uid="uid://wh5pc58jt0ro" path="res://models/robot.tscn" id="2_da6vm"]
 [ext_resource type="PackedScene" uid="uid://dcdmpd67cdr0o" path="res://models/Rink.glb" id="3_st4qh"]
 
+[sub_resource type="Environment" id="Environment_st4qh"]
+background_mode = 1
+background_color = Color(0.1, 0.1, 0.14, 1)
+ambient_light_source = 2
+ambient_light_color = Color(0.65, 0.68, 0.75, 1)
+ambient_light_energy = 0.8
+tonemap_mode = 3
+tonemap_white = 6.0
+
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_da6vm"]
 margin = 0.0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_da6vm"]
-
-[sub_resource type="PlaneMesh" id="PlaneMesh_st4qh"]
-material = SubResource("StandardMaterial3D_da6vm")
-uv2_padding = 0.0
-size = Vector2(7, 7)
 
 [node name="Test" type="Node3D" unique_id=1281674169]
 script = ExtResource("1_da6vm")
 
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1173559244]
+environment = SubResource("Environment_st4qh")
+
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1184951220]
-transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 2.84, 0)
-light_energy = 0.475
-light_indirect_energy = 16.0
-light_volumetric_fog_energy = 16.0
-light_angular_distance = 43.66
+transform = Transform3D(0.93969995, -0.2801565, 0.19615383, 0, 0.5735493, 0.8191711, -0.34199998, -0.76977503, 0.5389642, 0, 3, 0)
+light_color = Color(1, 0.97, 0.92, 1)
+light_energy = 1.2
+shadow_enabled = true
+shadow_blur = 2.0
+directional_shadow_max_distance = 5.0
 
 [node name="Rink" parent="." unique_id=1832758005 instance=ExtResource("3_st4qh")]
 
 [node name="Robot" parent="." unique_id=1284975059 instance=ExtResource("2_da6vm")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -0.7, 0.25, 0)
+team_color = Color(0.14901961, 0.2509804, 0.8509804, 1)
 
 [node name="Robot2" parent="." unique_id=1952964133 instance=ExtResource("2_da6vm")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0.7, 0.25, 0)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1008671758]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=739274559]
 shape = SubResource("WorldBoundaryShape3D_da6vm")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor/CollisionShape3D" unique_id=947509502]
-visible = false
-mesh = SubResource("PlaneMesh_st4qh")
-
 [node name="Camera3D" type="Camera3D" parent="." unique_id=18130797]
-transform = Transform3D(1, 0, 0, 0, 0.60737586, 0.79441464, 0, -0.79441464, 0.60737586, 0, 1.3268632, 1.1291492)
+transform = Transform3D(1, 0, 0, 0, 0.42261824, 0.9063078, 0, -0.9063078, 0.42261824, 0, 1.4, 0.8)

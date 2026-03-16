@@ -5,9 +5,9 @@
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d1hmq"]
 resource_name = "mat_0"
 cull_mode = 2
-albedo_color = Color(0.7921569, 0.8196078, 0.9333334, 1)
-metallic = 1.0
-roughness = 0.21213204
+albedo_color = Color(0.35, 0.36, 0.4, 1)
+metallic = 0.3
+roughness = 0.6
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_i4wkh"]
 _surfaces = [{
@@ -252,8 +252,8 @@ mass = 0.454
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0, 0.02)
 continuous_cd = true
-linear_damp = 0.5
-angular_damp = 0.5
+linear_damp = 0.7
+angular_damp = 5.0
 script = ExtResource("1_ue1vh")
 
 [node name="Chassis" type="MeshInstance3D" parent="." unique_id=1368484400]

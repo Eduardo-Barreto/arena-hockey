@@ -3,9 +3,17 @@ extends RigidBody3D
 
 @export var max_engine_force := 8.0
 @export var wheel_separation := 0.16
+@export var team_color := Color.RED
 
 var _left_input := 0.0
 var _right_input := 0.0
+
+
+func _ready() -> void:
+	var scoop_mat := StandardMaterial3D.new()
+	scoop_mat.albedo_color = team_color
+	$RightScoop.material_override = scoop_mat
+	$LeftScoop.material_override = scoop_mat
 
 
 func receive_input(left: float, right: float) -> void:
