@@ -1,9 +1,12 @@
 <div align="center">
-![header-arena-hockey](assets/banner.jpg)
+
+<a href="https://eduardo-barreto.github.io/arena-hockey/">
+
+![header-arena-hockey](https://github.com/Eduardo-Barreto/arena-hockey/blob/main/assets/banner.jpg?raw=true)
+</a>
 
 Hockey de robôs. Local multiplayer de 1v1 até 3v3.
 
-<a href="https://eduardo-barreto.github.io/arena-hockey/"><strong>Jogar no navegador</strong></a>
 </div>
 
 ---
