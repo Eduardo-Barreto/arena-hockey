@@ -2,6 +2,7 @@ class_name Robot
 extends RigidBody3D
 
 @export var max_engine_force := 8.0
+@export var torque_multiplier := 1.0
 @export var wheel_separation := 0.16
 @export var team_color := Color.RED
 
@@ -35,5 +36,5 @@ func _physics_process(_delta: float) -> void:
 	var net_force := (left_force + right_force) / 2.0
 	apply_central_force(forward * net_force * traction)
 
-	var yaw_torque := (right_force - left_force) * wheel_separation / 2.0
+	var yaw_torque := (right_force - left_force) * wheel_separation / 2.0 * torque_multiplier
 	apply_torque(Vector3.UP * yaw_torque * traction)
