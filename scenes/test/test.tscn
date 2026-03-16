@@ -3,6 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://wh5pc58jt0ro" path="res://models/robot.tscn" id="2_da6vm"]
 [ext_resource type="PackedScene" uid="uid://dcdmpd67cdr0o" path="res://models/Rink.glb" id="3_st4qh"]
 [ext_resource type="Script" uid="uid://to2n1wyp3jk2" path="res://scripts/local_player_input.gd" id="4_lpi"]
+[ext_resource type="PackedScene" path="res://scenes/puck/puck.tscn" id="5_puck"]
 
 [sub_resource type="Environment" id="Environment_st4qh"]
 background_mode = 1
@@ -45,6 +46,9 @@ team_color = Color(0.14901961, 0.2509804, 0.8509804, 1)
 [node name="Input" type="Node" parent="Robot2" unique_id=448973120]
 script = ExtResource("4_lpi")
 player_index = 2
+
+[node name="Puck" parent="." unique_id=446236469 instance=ExtResource("5_puck")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1008671758]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
