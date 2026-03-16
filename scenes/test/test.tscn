@@ -1,8 +1,8 @@
 [gd_scene format=3 uid="uid://c32r65kwfs60j"]
 
-[ext_resource type="Script" uid="uid://dmyxgr7axbqck" path="res://scripts/test_drive.gd" id="1_da6vm"]
 [ext_resource type="PackedScene" uid="uid://wh5pc58jt0ro" path="res://models/robot.tscn" id="2_da6vm"]
 [ext_resource type="PackedScene" uid="uid://dcdmpd67cdr0o" path="res://models/Rink.glb" id="3_st4qh"]
+[ext_resource type="Script" uid="uid://to2n1wyp3jk2" path="res://scripts/local_player_input.gd" id="4_lpi"]
 
 [sub_resource type="Environment" id="Environment_st4qh"]
 background_mode = 1
@@ -17,7 +17,6 @@ tonemap_white = 6.0
 margin = 0.0
 
 [node name="Test" type="Node3D" unique_id=1281674169]
-script = ExtResource("1_da6vm")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1173559244]
 environment = SubResource("Environment_st4qh")
@@ -31,16 +30,24 @@ shadow_blur = 2.0
 directional_shadow_max_distance = 5.0
 
 [node name="Rink" parent="." unique_id=1832758005 instance=ExtResource("3_st4qh")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
 [node name="Robot" parent="." unique_id=1284975059 instance=ExtResource("2_da6vm")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, -0.7, 0.25, 0)
-team_color = Color(0.14901961, 0.2509804, 0.8509804, 1)
+
+[node name="Input" type="Node" parent="Robot" unique_id=1979642613]
+script = ExtResource("4_lpi")
 
 [node name="Robot2" parent="." unique_id=1952964133 instance=ExtResource("2_da6vm")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0.7, 0.25, 0)
+team_color = Color(0.14901961, 0.2509804, 0.8509804, 1)
+
+[node name="Input" type="Node" parent="Robot2" unique_id=448973120]
+script = ExtResource("4_lpi")
+player_index = 2
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1008671758]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.005, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=739274559]
 shape = SubResource("WorldBoundaryShape3D_da6vm")
