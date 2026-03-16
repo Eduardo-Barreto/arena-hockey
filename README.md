@@ -1,15 +1,14 @@
 <div align="center">
 
-<a href="https://eduardo-barreto.github.io/arena-hockey/">
+# Arena Hockey
 
-![header-arena-hockey](https://github.com/Eduardo-Barreto/arena-hockey/blob/main/assets/banner.jpg?raw=true)
+<a href="https://eduardo-barreto.github.io/arena-hockey/">
+<img src="https://github.com/Eduardo-Barreto/arena-hockey/blob/main/assets/banner.jpg?raw=true" alt="Arena Hockey" width="100%">
 </a>
 
 Hockey de robôs. Local multiplayer de 1v1 até 3v3.
 
 </div>
-
----
 
 ## Controles
 
