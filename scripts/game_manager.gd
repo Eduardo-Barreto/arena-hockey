@@ -7,6 +7,7 @@ const INPUT_SCRIPT := preload("res://scripts/local_player_input.gd")
 const TEAM_COLORS: Array[Color] = [Color.RED, Color(0.149, 0.251, 0.851)]
 const TEAM_X := [-0.7, 0.7]
 const TEAM_ROT_Y := [PI / 2.0, -PI / 2.0]
+const SPAWN_Y := 0.25
 const Z_SPREAD: Array[Array] = [
 	[0.0],
 	[-0.3, 0.3],
@@ -26,30 +27,39 @@ func _rebuild() -> void:
 		robot.queue_free()
 	_robots.clear()
 
-	for team in 2:
-		var start := team * 3
-		var enabled_indices: Array[int] = []
-		for i in range(start, start + 3):
-			if GameConfig.robots[i].enabled:
-				enabled_indices.append(i)
-
-		var positions: Array = Z_SPREAD[enabled_indices.size() - 1] if enabled_indices.size() > 0 else []
+	for team in TEAM_COLORS.size():
+		var enabled_indices := _get_enabled_indices(team)
+		if enabled_indices.is_empty():
+			continue
+		var positions: Array = Z_SPREAD[enabled_indices.size() - 1]
 		for slot_idx in enabled_indices.size():
-			var robot_idx: int = enabled_indices[slot_idx]
-			var config: Dictionary = GameConfig.robots[robot_idx]
+			_spawn_robot(enabled_indices[slot_idx], team, positions[slot_idx])
 
-			var robot: Robot = ROBOT_SCENE.instantiate()
-			robot.max_engine_force = config.max_engine_force
-			robot.torque_multiplier = config.torque_multiplier
-			robot.team_color = TEAM_COLORS[team]
-			robot.transform.origin = Vector3(TEAM_X[team], 0.25, positions[slot_idx])
-			robot.transform.basis = Basis(Vector3.UP, TEAM_ROT_Y[team])
 
-			var input_node := Node.new()
-			input_node.name = "Input"
-			input_node.set_script(INPUT_SCRIPT)
-			input_node.set("robot_index", robot_idx)
-			robot.add_child(input_node)
+func _get_enabled_indices(team: int) -> Array[int]:
+	var start := team * GameConfig.ROBOTS_PER_TEAM
+	var indices: Array[int] = []
+	for i in range(start, start + GameConfig.ROBOTS_PER_TEAM):
+		if GameConfig.robots[i].enabled:
+			indices.append(i)
+	return indices
 
-			add_child(robot)
-			_robots.append(robot)
+
+func _spawn_robot(robot_idx: int, team: int, z_pos: float) -> void:
+	var config: Dictionary = GameConfig.robots[robot_idx]
+
+	var robot: Robot = ROBOT_SCENE.instantiate()
+	robot.max_engine_force = config.max_engine_force
+	robot.torque_multiplier = config.torque_multiplier
+	robot.team_color = TEAM_COLORS[team]
+	robot.transform.origin = Vector3(TEAM_X[team], SPAWN_Y, z_pos)
+	robot.transform.basis = Basis(Vector3.UP, TEAM_ROT_Y[team])
+
+	var input_node := Node.new()
+	input_node.name = "Input"
+	input_node.set_script(INPUT_SCRIPT)
+	input_node.set("robot_index", robot_idx)
+	robot.add_child(input_node)
+
+	add_child(robot)
+	_robots.append(robot)

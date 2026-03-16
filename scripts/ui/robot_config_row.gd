@@ -3,8 +3,11 @@ extends PanelContainer
 
 signal rebind_requested(row: RobotConfigRow, action: String)
 
-var robot_index := -1
+const ACTION_LABELS := { forward = "Frente", back = "Trás", left = "Esq", right = "Dir" }
+const TEAM_LETTERS := ["V", "A"]
+const TEAM_COLORS: Array[Color] = [Color(1.0, 0.4, 0.4), Color(0.4, 0.5, 1.0)]
 
+var robot_index := -1
 var _force_slider: HSlider
 var _force_value: Label
 var _torque_slider: HSlider
@@ -14,85 +17,60 @@ var _bind_buttons: Dictionary = {}
 
 func setup(idx: int) -> void:
 	robot_index = idx
-	var team := idx / 3
-	var team_slot := idx % 3
-	var team_letter := "V" if team == 0 else "A"
-	var color := Color(1.0, 0.4, 0.4) if team == 0 else Color(0.4, 0.5, 1.0)
+	var team := idx / GameConfig.ROBOTS_PER_TEAM
+	var team_slot := idx % GameConfig.ROBOTS_PER_TEAM
 
-	var row_style := StyleBoxFlat.new()
-	row_style.bg_color = Color(1, 1, 1, 0.03)
-	row_style.corner_radius_top_left = 6
-	row_style.corner_radius_top_right = 6
-	row_style.corner_radius_bottom_left = 6
-	row_style.corner_radius_bottom_right = 6
-	row_style.content_margin_left = 12
-	row_style.content_margin_right = 12
-	row_style.content_margin_top = 8
-	row_style.content_margin_bottom = 8
-	add_theme_stylebox_override("panel", row_style)
+	_apply_row_style()
 
 	var hbox := HBoxContainer.new()
 	hbox.add_theme_constant_override("separation", 16)
 	hbox.alignment = BoxContainer.ALIGNMENT_CENTER
 	add_child(hbox)
 
-	var label := Label.new()
-	label.text = "%s%d" % [team_letter, team_slot + 1]
-	label.add_theme_color_override("font_color", color)
-	label.add_theme_font_size_override("font_size", 20)
-	label.custom_minimum_size.x = 36
-	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	hbox.add_child(label)
-
+	_add_robot_label(hbox, team, team_slot)
 	hbox.add_child(_styled_separator())
-
-	_add_slider_group(hbox, "Vel", 1.0, 20.0, 0.5,
+	_force_slider = _add_slider(hbox, "Vel", 1.0, 20.0, 0.5,
 		GameConfig.robots[idx].max_engine_force, _on_force_changed)
-
 	hbox.add_child(_styled_separator())
-
-	_add_slider_group(hbox, "Rot", 0.1, 5.0, 0.1,
+	_torque_slider = _add_slider(hbox, "Rot", 0.1, 5.0, 0.1,
 		GameConfig.robots[idx].torque_multiplier, _on_torque_changed)
-
 	hbox.add_child(_styled_separator())
-
-	var binds_box := HBoxContainer.new()
-	binds_box.add_theme_constant_override("separation", 6)
-	hbox.add_child(binds_box)
-
-	for action in GameConfig.ACTIONS:
-		var btn := Button.new()
-		btn.custom_minimum_size = Vector2(90, 32)
-		btn.add_theme_font_size_override("font_size", 13)
-		_apply_bind_button_style(btn)
-		btn.text = "%s  %s" % [_action_label(action), _event_label(GameConfig.robots[idx].bindings[action])]
-		btn.pressed.connect(_on_bind_pressed.bind(action))
-		binds_box.add_child(btn)
-		_bind_buttons[action] = btn
-
+	_add_bind_buttons(hbox, idx)
 	hbox.add_child(_styled_separator())
-
-	var reset_btn := Button.new()
-	reset_btn.text = "Reset"
-	reset_btn.custom_minimum_size = Vector2(60, 32)
-	reset_btn.add_theme_font_size_override("font_size", 12)
-	_apply_reset_button_style(reset_btn)
-	reset_btn.pressed.connect(_on_reset)
-	hbox.add_child(reset_btn)
+	_add_reset_button(hbox)
 
 
 func set_bind_waiting(action: String) -> void:
-	(_bind_buttons[action] as Button).text = "%s  ..." % _action_label(action)
+	(_bind_buttons[action] as Button).text = _format_bind_text(action, "...")
 
 
 func update_bind_label(action: String) -> void:
 	var event: InputEvent = GameConfig.robots[robot_index].bindings[action]
-	(_bind_buttons[action] as Button).text = "%s  %s" % [_action_label(action), _event_label(event)]
+	(_bind_buttons[action] as Button).text = _format_bind_text(action, _event_label(event))
 
 
-func _add_slider_group(parent: HBoxContainer, label_text: String,
+func _apply_row_style() -> void:
+	var style := _create_stylebox(Color(1, 1, 1, 0.03), 6)
+	style.content_margin_left = 12
+	style.content_margin_right = 12
+	style.content_margin_top = 8
+	style.content_margin_bottom = 8
+	add_theme_stylebox_override("panel", style)
+
+
+func _add_robot_label(parent: HBoxContainer, team: int, slot: int) -> void:
+	var label := Label.new()
+	label.text = "%s%d" % [TEAM_LETTERS[team], slot + 1]
+	label.add_theme_color_override("font_color", TEAM_COLORS[team])
+	label.add_theme_font_size_override("font_size", 20)
+	label.custom_minimum_size.x = 36
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	parent.add_child(label)
+
+
+func _add_slider(parent: HBoxContainer, label_text: String,
 		min_val: float, max_val: float, step_val: float,
-		initial: float, callback: Callable) -> void:
+		initial: float, callback: Callable) -> HSlider:
 	var group := HBoxContainer.new()
 	group.add_theme_constant_override("separation", 6)
 	parent.add_child(group)
@@ -110,7 +88,6 @@ func _add_slider_group(parent: HBoxContainer, label_text: String,
 	slider.value = initial
 	slider.custom_minimum_size.x = 100
 	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
-	slider.value_changed.connect(callback)
 	group.add_child(slider)
 
 	var val_label := Label.new()
@@ -120,12 +97,44 @@ func _add_slider_group(parent: HBoxContainer, label_text: String,
 	val_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	group.add_child(val_label)
 
+	slider.value_changed.connect(func(value: float) -> void:
+		callback.call(value)
+		val_label.text = str(value)
+	)
+
 	if label_text == "Vel":
-		_force_slider = slider
 		_force_value = val_label
 	else:
-		_torque_slider = slider
 		_torque_value = val_label
+
+	return slider
+
+
+func _add_bind_buttons(parent: HBoxContainer, idx: int) -> void:
+	var binds_box := HBoxContainer.new()
+	binds_box.add_theme_constant_override("separation", 6)
+	parent.add_child(binds_box)
+
+	for action in GameConfig.ACTIONS:
+		var btn := Button.new()
+		btn.custom_minimum_size = Vector2(90, 32)
+		btn.add_theme_font_size_override("font_size", 13)
+		btn.text = _format_bind_text(action, _event_label(GameConfig.robots[idx].bindings[action]))
+		btn.pressed.connect(_on_bind_pressed.bind(action))
+		_apply_button_style(btn, Color(0.15, 0.15, 0.2), Color(0.2, 0.2, 0.28), Color(0.1, 0.1, 0.15),
+			Color(0.3, 0.3, 0.4))
+		binds_box.add_child(btn)
+		_bind_buttons[action] = btn
+
+
+func _add_reset_button(parent: HBoxContainer) -> void:
+	var btn := Button.new()
+	btn.text = "Reset"
+	btn.custom_minimum_size = Vector2(60, 32)
+	btn.add_theme_font_size_override("font_size", 12)
+	btn.pressed.connect(_on_reset)
+	_apply_button_style(btn, Color(0.35, 0.15, 0.15), Color(0.45, 0.18, 0.18), Color(0.25, 0.1, 0.1))
+	parent.add_child(btn)
 
 
 func _on_reset() -> void:
@@ -139,21 +148,18 @@ func _on_reset() -> void:
 
 func _on_force_changed(value: float) -> void:
 	GameConfig.robots[robot_index].max_engine_force = value
-	_force_value.text = str(value)
 
 
 func _on_torque_changed(value: float) -> void:
 	GameConfig.robots[robot_index].torque_multiplier = value
-	_torque_value.text = str(value)
 
 
 func _on_bind_pressed(action: String) -> void:
 	rebind_requested.emit(self, action)
 
 
-func _action_label(action: String) -> String:
-	var labels := { forward = "Frente", back = "Trás", left = "Esq", right = "Dir" }
-	return labels.get(action, action)
+func _format_bind_text(action: String, key_text: String) -> String:
+	return "%s  %s" % [ACTION_LABELS.get(action, action), key_text]
 
 
 func _event_label(event: InputEvent) -> String:
@@ -163,9 +169,8 @@ func _event_label(event: InputEvent) -> String:
 	if event is InputEventJoypadButton:
 		return "Joy%d" % (event as InputEventJoypadButton).button_index
 	if event is InputEventJoypadMotion:
-		var axis_event := event as InputEventJoypadMotion
-		var sign_str := "+" if axis_event.axis_value > 0 else "-"
-		return "Ax%d%s" % [axis_event.axis, sign_str]
+		var motion := event as InputEventJoypadMotion
+		return "Ax%d%s" % [motion.axis, "+" if motion.axis_value > 0 else "-"]
 	return "?"
 
 
@@ -176,13 +181,25 @@ func _styled_separator() -> VSeparator:
 	return sep
 
 
-func _apply_reset_button_style(btn: Button) -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.35, 0.15, 0.15)
-	normal.corner_radius_top_left = 4
-	normal.corner_radius_top_right = 4
-	normal.corner_radius_bottom_left = 4
-	normal.corner_radius_bottom_right = 4
+func _create_stylebox(bg: Color, radius: int, border := Color.TRANSPARENT) -> StyleBoxFlat:
+	var style := StyleBoxFlat.new()
+	style.bg_color = bg
+	style.corner_radius_top_left = radius
+	style.corner_radius_top_right = radius
+	style.corner_radius_bottom_left = radius
+	style.corner_radius_bottom_right = radius
+	if border != Color.TRANSPARENT:
+		style.border_color = border
+		style.border_width_bottom = 1
+		style.border_width_top = 1
+		style.border_width_left = 1
+		style.border_width_right = 1
+	return style
+
+
+func _apply_button_style(btn: Button, normal_bg: Color, hover_bg: Color,
+		pressed_bg: Color, border := Color.TRANSPARENT) -> void:
+	var normal := _create_stylebox(normal_bg, 4, border)
 	normal.content_margin_left = 8
 	normal.content_margin_right = 8
 	normal.content_margin_top = 4
@@ -190,37 +207,11 @@ func _apply_reset_button_style(btn: Button) -> void:
 	btn.add_theme_stylebox_override("normal", normal)
 
 	var hover := normal.duplicate()
-	hover.bg_color = Color(0.45, 0.18, 0.18)
+	hover.bg_color = hover_bg
+	if border != Color.TRANSPARENT:
+		hover.border_color = Color(border, 1.3)
 	btn.add_theme_stylebox_override("hover", hover)
 
 	var pressed := normal.duplicate()
-	pressed.bg_color = Color(0.25, 0.1, 0.1)
-	btn.add_theme_stylebox_override("pressed", pressed)
-
-
-func _apply_bind_button_style(btn: Button) -> void:
-	var normal := StyleBoxFlat.new()
-	normal.bg_color = Color(0.15, 0.15, 0.2)
-	normal.corner_radius_top_left = 4
-	normal.corner_radius_top_right = 4
-	normal.corner_radius_bottom_left = 4
-	normal.corner_radius_bottom_right = 4
-	normal.border_color = Color(0.3, 0.3, 0.4)
-	normal.border_width_bottom = 1
-	normal.border_width_top = 1
-	normal.border_width_left = 1
-	normal.border_width_right = 1
-	normal.content_margin_left = 8
-	normal.content_margin_right = 8
-	normal.content_margin_top = 4
-	normal.content_margin_bottom = 4
-	btn.add_theme_stylebox_override("normal", normal)
-
-	var hover := normal.duplicate()
-	hover.bg_color = Color(0.2, 0.2, 0.28)
-	hover.border_color = Color(0.4, 0.4, 0.55)
-	btn.add_theme_stylebox_override("hover", hover)
-
-	var pressed := normal.duplicate()
-	pressed.bg_color = Color(0.1, 0.1, 0.15)
+	pressed.bg_color = pressed_bg
 	btn.add_theme_stylebox_override("pressed", pressed)

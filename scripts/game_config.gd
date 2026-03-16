@@ -5,10 +5,11 @@ signal config_changed
 const SAVE_PATH := "user://settings.cfg"
 const ACTIONS := ["forward", "back", "left", "right"]
 const ROBOT_COUNT := 6
+const ROBOTS_PER_TEAM := 3
+const DEFAULT_ENGINE_FORCE := 8.0
+const DEFAULT_TORQUE_MULTIPLIER := 1.0
 
-var robots: Array[Dictionary] = []
-
-var _default_bindings := [
+const DEFAULT_BINDINGS := [
 	{ forward = KEY_W, back = KEY_S, left = KEY_A, right = KEY_D },
 	{ forward = KEY_T, back = KEY_G, left = KEY_F, right = KEY_H },
 	{ forward = KEY_I, back = KEY_K, left = KEY_J, right = KEY_L },
@@ -16,6 +17,8 @@ var _default_bindings := [
 	{ forward = KEY_KP_8, back = KEY_KP_5, left = KEY_KP_4, right = KEY_KP_6 },
 	{ forward = KEY_HOME, back = KEY_END, left = KEY_DELETE, right = KEY_PAGEDOWN },
 ]
+
+var robots: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -27,45 +30,33 @@ func _ready() -> void:
 func _init_defaults() -> void:
 	robots.clear()
 	for i in ROBOT_COUNT:
-		var bindings := {}
-		var defaults: Dictionary = _default_bindings[i]
-		for action in ACTIONS:
-			var event := InputEventKey.new()
-			event.physical_keycode = defaults[action]
-			bindings[action] = event
 		robots.append({
-			enabled = (i == 0 or i == 3),
-			max_engine_force = 8.0,
-			torque_multiplier = 1.0,
-			bindings = bindings,
+			enabled = (i == 0 or i == ROBOTS_PER_TEAM),
+			max_engine_force = DEFAULT_ENGINE_FORCE,
+			torque_multiplier = DEFAULT_TORQUE_MULTIPLIER,
+			bindings = _create_default_bindings(i),
 		})
 
 
 func get_team_size(team: int) -> int:
-	var start := team * 3
+	var start := team * ROBOTS_PER_TEAM
 	var count := 0
-	for i in range(start, start + 3):
+	for i in range(start, start + ROBOTS_PER_TEAM):
 		if robots[i].enabled:
 			count += 1
 	return count
 
 
 func set_team_size(team: int, size: int) -> void:
-	var start := team * 3
-	for i in range(start, start + 3):
+	var start := team * ROBOTS_PER_TEAM
+	for i in range(start, start + ROBOTS_PER_TEAM):
 		robots[i].enabled = (i - start) < size
 
 
 func reset_robot(idx: int) -> void:
-	var defaults: Dictionary = _default_bindings[idx]
-	var bindings := {}
-	for action in ACTIONS:
-		var event := InputEventKey.new()
-		event.physical_keycode = defaults[action]
-		bindings[action] = event
-	robots[idx].max_engine_force = 8.0
-	robots[idx].torque_multiplier = 1.0
-	robots[idx].bindings = bindings
+	robots[idx].max_engine_force = DEFAULT_ENGINE_FORCE
+	robots[idx].torque_multiplier = DEFAULT_TORQUE_MULTIPLIER
+	robots[idx].bindings = _create_default_bindings(idx)
 
 
 func apply_input_map() -> void:
@@ -112,3 +103,13 @@ func _load() -> void:
 				var event := InputEventKey.new()
 				event.physical_keycode = config.get_value(section, key) as Key
 				robot.bindings[action] = event
+
+
+func _create_default_bindings(idx: int) -> Dictionary:
+	var defaults: Dictionary = DEFAULT_BINDINGS[idx]
+	var bindings := {}
+	for action in ACTIONS:
+		var event := InputEventKey.new()
+		event.physical_keycode = defaults[action]
+		bindings[action] = event
+	return bindings
