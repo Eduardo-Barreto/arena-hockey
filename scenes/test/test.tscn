@@ -2,8 +2,9 @@
 
 [ext_resource type="PackedScene" uid="uid://dcdmpd67cdr0o" path="res://models/Rink.glb" id="3_st4qh"]
 [ext_resource type="PackedScene" path="res://scenes/puck/puck.tscn" id="5_puck"]
-[ext_resource type="Script" path="res://scripts/game_manager.gd" id="6_gm"]
-[ext_resource type="Script" path="res://scripts/ui/pause_menu.gd" id="7_pm"]
+[ext_resource type="Script" uid="uid://bkwqgor3irhdu" path="res://scripts/game_manager.gd" id="6_gm"]
+[ext_resource type="Script" uid="uid://binf4xmn1yhp8" path="res://scripts/ui/pause_menu.gd" id="7_pm"]
+[ext_resource type="Script" uid="uid://n7jmrypljkpe" path="res://scripts/goal_detector.gd" id="8_goal"]
 
 [sub_resource type="Environment" id="Environment_st4qh"]
 background_mode = 1
@@ -16,6 +17,9 @@ tonemap_white = 6.0
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_da6vm"]
 margin = 0.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_goal"]
+size = Vector3(0.1883789, 0.1, 0.53565675)
 
 [node name="Test" type="Node3D" unique_id=1281674169]
 
@@ -33,7 +37,7 @@ directional_shadow_max_distance = 5.0
 [node name="Rink" parent="." unique_id=1832758005 instance=ExtResource("3_st4qh")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
 
-[node name="GameManager" type="Node3D" parent="."]
+[node name="GameManager" type="Node3D" parent="." unique_id=1360180026]
 script = ExtResource("6_gm")
 
 [node name="Puck" parent="." unique_id=446236469 instance=ExtResource("5_puck")]
@@ -48,5 +52,21 @@ shape = SubResource("WorldBoundaryShape3D_da6vm")
 [node name="Camera3D" type="Camera3D" parent="." unique_id=18130797]
 transform = Transform3D(1, 0, 0, 0, 0.42261824, 0.9063078, 0, -0.9063078, 0.42261824, 0, 1.4, 0.8)
 
-[node name="PauseMenu" type="CanvasLayer" parent="."]
+[node name="PauseMenu" type="CanvasLayer" parent="." unique_id=1927355105]
 script = ExtResource("7_pm")
+
+[node name="GoalLeft" type="Area3D" parent="." unique_id=1590581581]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.6021223, 0.05, 0)
+script = ExtResource("8_goal")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GoalLeft" unique_id=242134234]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.007275462, 0, -0.0014831796)
+shape = SubResource("BoxShape3D_goal")
+
+[node name="GoalRight" type="Area3D" parent="." unique_id=153603637]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.22, 0.05, 0)
+script = ExtResource("8_goal")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="GoalRight" unique_id=445538747]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.37432373, 0, -0.0014831796)
+shape = SubResource("BoxShape3D_goal")

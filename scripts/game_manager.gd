@@ -3,6 +3,7 @@ extends Node3D
 
 const ROBOT_SCENE := preload("res://models/robot.tscn")
 const INPUT_SCRIPT := preload("res://scripts/local_player_input.gd")
+const AI_SCRIPT := preload("res://scripts/ai_player_input.gd")
 
 const TEAM_COLORS: Array[Color] = [Color.RED, Color(0.149, 0.251, 0.851)]
 const TEAM_X := [-0.7, 0.7]
@@ -57,8 +58,12 @@ func _spawn_robot(robot_idx: int, team: int, z_pos: float) -> void:
 
 	var input_node := Node.new()
 	input_node.name = "Input"
-	input_node.set_script(INPUT_SCRIPT)
-	input_node.set("robot_index", robot_idx)
+	if team == 1:
+		input_node.set_script(AI_SCRIPT)
+		input_node.set("team", team)
+	else:
+		input_node.set_script(INPUT_SCRIPT)
+		input_node.set("robot_index", robot_idx)
 	robot.add_child(input_node)
 
 	add_child(robot)

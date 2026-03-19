@@ -247,6 +247,17 @@ size = Vector3(0.12352638, 0.034708984, 0.07189209)
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_ue1vh"]
 points = PackedVector3Array(-0.14, 0.055, 0, -0.01006227, 0.037870523, 0, -0.01, 0.038, 0, -0.14, 0.02, 0, -0.14, 0.055, -0.035, -0.01, 0.038, -0.035, -0.14, 0.02, -0.03)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_puck_detector"]
+size = Vector3(0.17831054, 0.05, 0.14770019)
+
+[sub_resource type="BoxMesh" id="BoxMesh_puck_debug"]
+size = Vector3(0.14, 0.05, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_puck_debug"]
+transparency = 1
+no_depth_test = true
+albedo_color = Color(0, 1, 0, 0.3)
+
 [node name="Robot" type="RigidBody3D" unique_id=1284975059]
 mass = 0.454
 center_of_mass_mode = 1
@@ -305,3 +316,16 @@ shape = SubResource("ConvexPolygonShape3D_ue1vh")
 [node name="LeftArmCollision" type="CollisionShape3D" parent="." unique_id=1583012623]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0.063498504, -0.03767242, 0.11003137)
 shape = SubResource("ConvexPolygonShape3D_ue1vh")
+
+[node name="PuckDetector" type="Area3D" parent="." unique_id=1714391624]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.06)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PuckDetector" unique_id=1846908963]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004682623, 0, -0.023103025)
+shape = SubResource("BoxShape3D_puck_detector")
+
+[node name="DebugMesh" type="MeshInstance3D" parent="PuckDetector" unique_id=1283450621]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.028804287)
+visible = false
+mesh = SubResource("BoxMesh_puck_debug")
+surface_material_override/0 = SubResource("StandardMaterial3D_puck_debug")

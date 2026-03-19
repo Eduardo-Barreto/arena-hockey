@@ -6,8 +6,12 @@ extends RigidBody3D
 @export var wheel_separation := 0.16
 @export var team_color := Color.RED
 
+const PUCK_GRACE_TIME := 0.3
+
+var has_puck := false
 var _left_input := 0.0
 var _right_input := 0.0
+var _puck_grace := 0.0
 
 
 func _ready() -> void:
@@ -15,6 +19,19 @@ func _ready() -> void:
 	scoop_mat.albedo_color = team_color
 	$RightScoop.material_override = scoop_mat
 	$LeftScoop.material_override = scoop_mat
+	$PuckDetector.body_entered.connect(_on_puck_detector_entered)
+	$PuckDetector.body_exited.connect(_on_puck_detector_exited)
+
+
+func _on_puck_detector_entered(body: Node3D) -> void:
+	if body is Puck:
+		has_puck = true
+		_puck_grace = 0.0
+
+
+func _on_puck_detector_exited(body: Node3D) -> void:
+	if body is Puck:
+		_puck_grace = PUCK_GRACE_TIME
 
 
 func receive_input(left: float, right: float) -> void:
@@ -22,7 +39,12 @@ func receive_input(left: float, right: float) -> void:
 	_right_input = clampf(right, -1.0, 1.0)
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	if _puck_grace > 0.0:
+		_puck_grace -= delta
+		if _puck_grace <= 0.0:
+			has_puck = false
+
 	var left_force := _left_input * max_engine_force
 	var right_force := _right_input * max_engine_force
 
