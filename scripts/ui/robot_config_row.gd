@@ -8,11 +8,13 @@ const TEAM_LETTERS := ["V", "A"]
 const TEAM_COLORS: Array[Color] = [Color(1.0, 0.4, 0.4), Color(0.4, 0.5, 1.0)]
 
 var robot_index := -1
+var _auto_check: CheckBox
 var _force_slider: HSlider
 var _force_value: Label
 var _torque_slider: HSlider
 var _torque_value: Label
 var _bind_buttons: Dictionary = {}
+var _binds_box: HBoxContainer
 
 
 func setup(idx: int) -> void:
@@ -29,6 +31,8 @@ func setup(idx: int) -> void:
 
 	_add_robot_label(hbox, team, team_slot)
 	hbox.add_child(_styled_separator())
+	_add_auto_checkbox(hbox, idx)
+	hbox.add_child(_styled_separator())
 	_force_slider = _add_slider(hbox, "Vel", 1.0, 20.0, 0.5,
 		GameConfig.robots[idx].max_engine_force, _on_force_changed)
 	hbox.add_child(_styled_separator())
@@ -38,6 +42,7 @@ func setup(idx: int) -> void:
 	_add_bind_buttons(hbox, idx)
 	hbox.add_child(_styled_separator())
 	_add_reset_button(hbox)
+	_update_binds_visibility()
 
 
 func set_bind_waiting(action: String) -> void:
@@ -110,10 +115,24 @@ func _add_slider(parent: HBoxContainer, label_text: String,
 	return slider
 
 
+func _add_auto_checkbox(parent: HBoxContainer, idx: int) -> void:
+	_auto_check = CheckBox.new()
+	_auto_check.text = "Auto"
+	_auto_check.button_pressed = GameConfig.robots[idx].auto
+	_auto_check.add_theme_font_size_override("font_size", 13)
+	_auto_check.toggled.connect(_on_auto_toggled)
+	parent.add_child(_auto_check)
+
+
+func _update_binds_visibility() -> void:
+	_binds_box.visible = not _auto_check.button_pressed
+
+
 func _add_bind_buttons(parent: HBoxContainer, idx: int) -> void:
-	var binds_box := HBoxContainer.new()
-	binds_box.add_theme_constant_override("separation", 6)
-	parent.add_child(binds_box)
+	_binds_box = HBoxContainer.new()
+	_binds_box.add_theme_constant_override("separation", 6)
+	parent.add_child(_binds_box)
+	var binds_box := _binds_box
 
 	for action in GameConfig.ACTIONS:
 		var btn := Button.new()
@@ -140,10 +159,17 @@ func _add_reset_button(parent: HBoxContainer) -> void:
 func _on_reset() -> void:
 	GameConfig.reset_robot(robot_index)
 	var config: Dictionary = GameConfig.robots[robot_index]
+	_auto_check.button_pressed = config.auto
 	_force_slider.value = config.max_engine_force
 	_torque_slider.value = config.torque_multiplier
 	for action in GameConfig.ACTIONS:
 		update_bind_label(action)
+	_update_binds_visibility()
+
+
+func _on_auto_toggled(enabled: bool) -> void:
+	GameConfig.robots[robot_index].auto = enabled
+	_update_binds_visibility()
 
 
 func _on_force_changed(value: float) -> void:

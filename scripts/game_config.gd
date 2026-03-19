@@ -32,6 +32,7 @@ func _init_defaults() -> void:
 	for i in ROBOT_COUNT:
 		robots.append({
 			enabled = (i == 0 or i == ROBOTS_PER_TEAM),
+			auto = false,
 			max_engine_force = DEFAULT_ENGINE_FORCE,
 			torque_multiplier = DEFAULT_TORQUE_MULTIPLIER,
 			bindings = _create_default_bindings(i),
@@ -54,6 +55,7 @@ func set_team_size(team: int, size: int) -> void:
 
 
 func reset_robot(idx: int) -> void:
+	robots[idx].auto = false
 	robots[idx].max_engine_force = DEFAULT_ENGINE_FORCE
 	robots[idx].torque_multiplier = DEFAULT_TORQUE_MULTIPLIER
 	robots[idx].bindings = _create_default_bindings(idx)
@@ -76,6 +78,7 @@ func save() -> void:
 		var section := "robot_%d" % i
 		var robot: Dictionary = robots[i]
 		config.set_value(section, "enabled", robot.enabled)
+		config.set_value(section, "auto", robot.auto)
 		config.set_value(section, "max_engine_force", robot.max_engine_force)
 		config.set_value(section, "torque_multiplier", robot.torque_multiplier)
 		for action in ACTIONS:
@@ -95,6 +98,7 @@ func _load() -> void:
 			continue
 		var robot: Dictionary = robots[i]
 		robot.enabled = config.get_value(section, "enabled", robot.enabled)
+		robot.auto = config.get_value(section, "auto", robot.auto)
 		robot.max_engine_force = config.get_value(section, "max_engine_force", robot.max_engine_force)
 		robot.torque_multiplier = config.get_value(section, "torque_multiplier", robot.torque_multiplier)
 		for action in ACTIONS:

@@ -58,7 +58,7 @@ func _spawn_robot(robot_idx: int, team: int, z_pos: float) -> void:
 
 	var input_node := Node.new()
 	input_node.name = "Input"
-	if team == 1:
+	if config.auto:
 		input_node.set_script(AI_SCRIPT)
 		input_node.set("team", team)
 	else:
