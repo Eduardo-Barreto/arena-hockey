@@ -140,7 +140,8 @@ func _build_panel() -> VBoxContainer:
 	add_child(center)
 
 	var panel := PanelContainer.new()
-	panel.custom_minimum_size = Vector2(1300, 700)
+	var viewport_size := get_viewport().get_visible_rect().size
+	panel.custom_minimum_size = viewport_size * 0.8
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.08, 0.08, 0.11)
 	style.corner_radius_top_left = 12
@@ -169,7 +170,7 @@ func _build_title(parent: VBoxContainer) -> void:
 	var title := Label.new()
 	title.text = "CONFIGURAÇÕES"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	title.add_theme_font_size_override("font_size", 24)
+	title.add_theme_font_size_override("font_size", 36)
 	title.add_theme_color_override("font_color", Color(0.85, 0.85, 0.9))
 	parent.add_child(title)
 
@@ -193,12 +194,12 @@ func _build_team_section(parent: VBoxContainer, team: int,
 	var team_label := Label.new()
 	team_label.text = header_text
 	team_label.add_theme_color_override("font_color", color)
-	team_label.add_theme_font_size_override("font_size", 15)
+	team_label.add_theme_font_size_override("font_size", 22)
 	header.add_child(team_label)
 
 	var size_label := Label.new()
 	size_label.text = "Jogadores:"
-	size_label.add_theme_font_size_override("font_size", 13)
+	size_label.add_theme_font_size_override("font_size", 20)
 	size_label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.55))
 	header.add_child(size_label)
 
@@ -206,7 +207,7 @@ func _build_team_section(parent: VBoxContainer, team: int,
 	spinbox.min_value = 1
 	spinbox.max_value = GameConfig.ROBOTS_PER_TEAM
 	spinbox.value = GameConfig.get_team_size(team)
-	spinbox.custom_minimum_size.x = 70
+	spinbox.custom_minimum_size = Vector2(100, 40)
 	spinbox.value_changed.connect(_on_team_size_changed.bind(team))
 	header.add_child(spinbox)
 	_team_spinboxes.append(spinbox)
@@ -217,7 +218,7 @@ func _build_team_section(parent: VBoxContainer, team: int,
 	header.add_child(right_line)
 
 	var rows_container := VBoxContainer.new()
-	rows_container.add_theme_constant_override("separation", 4)
+	rows_container.add_theme_constant_override("separation", 8)
 	section.add_child(rows_container)
 	_team_containers.append(rows_container)
 
@@ -225,9 +226,9 @@ func _build_team_section(parent: VBoxContainer, team: int,
 func _build_apply_button(parent: VBoxContainer) -> void:
 	var btn := Button.new()
 	btn.text = "APLICAR E VOLTAR"
-	btn.custom_minimum_size = Vector2(240, 44)
+	btn.custom_minimum_size = Vector2(320, 56)
 	btn.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	btn.add_theme_font_size_override("font_size", 15)
+	btn.add_theme_font_size_override("font_size", 22)
 	btn.pressed.connect(_on_apply)
 
 	var normal := StyleBoxFlat.new()

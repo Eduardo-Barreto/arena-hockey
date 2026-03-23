@@ -56,10 +56,10 @@ func update_bind_label(action: String) -> void:
 
 func _apply_row_style() -> void:
 	var style := _create_stylebox(Color(1, 1, 1, 0.03), 6)
-	style.content_margin_left = 12
-	style.content_margin_right = 12
-	style.content_margin_top = 8
-	style.content_margin_bottom = 8
+	style.content_margin_left = 20
+	style.content_margin_right = 20
+	style.content_margin_top = 14
+	style.content_margin_bottom = 14
 	add_theme_stylebox_override("panel", style)
 
 
@@ -67,8 +67,8 @@ func _add_robot_label(parent: HBoxContainer, team: int, slot: int) -> void:
 	var label := Label.new()
 	label.text = "%s%d" % [TEAM_LETTERS[team], slot + 1]
 	label.add_theme_color_override("font_color", TEAM_COLORS[team])
-	label.add_theme_font_size_override("font_size", 20)
-	label.custom_minimum_size.x = 36
+	label.add_theme_font_size_override("font_size", 28)
+	label.custom_minimum_size.x = 50
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	parent.add_child(label)
 
@@ -82,7 +82,7 @@ func _add_slider(parent: HBoxContainer, label_text: String,
 
 	var lbl := Label.new()
 	lbl.text = label_text
-	lbl.add_theme_font_size_override("font_size", 13)
+	lbl.add_theme_font_size_override("font_size", 20)
 	lbl.add_theme_color_override("font_color", Color(0.6, 0.6, 0.6))
 	group.add_child(lbl)
 
@@ -91,14 +91,14 @@ func _add_slider(parent: HBoxContainer, label_text: String,
 	slider.max_value = max_val
 	slider.step = step_val
 	slider.value = initial
-	slider.custom_minimum_size.x = 100
+	slider.custom_minimum_size = Vector2(160, 30)
 	slider.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	group.add_child(slider)
 
 	var val_label := Label.new()
 	val_label.text = str(initial)
-	val_label.add_theme_font_size_override("font_size", 13)
-	val_label.custom_minimum_size.x = 32
+	val_label.add_theme_font_size_override("font_size", 20)
+	val_label.custom_minimum_size.x = 44
 	val_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	group.add_child(val_label)
 
@@ -119,7 +119,7 @@ func _add_auto_checkbox(parent: HBoxContainer, idx: int) -> void:
 	_auto_check = CheckBox.new()
 	_auto_check.text = "Auto"
 	_auto_check.button_pressed = GameConfig.robots[idx].auto
-	_auto_check.add_theme_font_size_override("font_size", 13)
+	_auto_check.add_theme_font_size_override("font_size", 20)
 	_auto_check.toggled.connect(_on_auto_toggled)
 	parent.add_child(_auto_check)
 
@@ -136,8 +136,8 @@ func _add_bind_buttons(parent: HBoxContainer, idx: int) -> void:
 
 	for action in GameConfig.ACTIONS:
 		var btn := Button.new()
-		btn.custom_minimum_size = Vector2(90, 32)
-		btn.add_theme_font_size_override("font_size", 13)
+		btn.custom_minimum_size = Vector2(130, 42)
+		btn.add_theme_font_size_override("font_size", 18)
 		btn.text = _format_bind_text(action, _event_label(GameConfig.robots[idx].bindings[action]))
 		btn.pressed.connect(_on_bind_pressed.bind(action))
 		_apply_button_style(btn, Color(0.15, 0.15, 0.2), Color(0.2, 0.2, 0.28), Color(0.1, 0.1, 0.15),
@@ -149,8 +149,8 @@ func _add_bind_buttons(parent: HBoxContainer, idx: int) -> void:
 func _add_reset_button(parent: HBoxContainer) -> void:
 	var btn := Button.new()
 	btn.text = "Reset"
-	btn.custom_minimum_size = Vector2(60, 32)
-	btn.add_theme_font_size_override("font_size", 12)
+	btn.custom_minimum_size = Vector2(90, 42)
+	btn.add_theme_font_size_override("font_size", 18)
 	btn.pressed.connect(_on_reset)
 	_apply_button_style(btn, Color(0.35, 0.15, 0.15), Color(0.45, 0.18, 0.18), Color(0.25, 0.1, 0.1))
 	parent.add_child(btn)
