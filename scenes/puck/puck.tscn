@@ -1,6 +1,9 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c3h1lg0q66rqi"]
 
-[ext_resource type="Script" path="res://scripts/puck.gd" id="1_puck"]
+[ext_resource type="Script" uid="uid://fi6nf2two4ha" path="res://scripts/puck.gd" id="1_puck"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_puck"]
+friction = 0.8
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_puck"]
 height = 0.0127
@@ -16,14 +19,17 @@ radial_segments = 32
 albedo_color = Color(0.15, 0.15, 0.15, 1)
 roughness = 0.7
 
-[node name="Puck" type="RigidBody3D"]
-script = ExtResource("1_puck")
-mass = 0.014
+[node name="Puck" type="RigidBody3D" unique_id=1463924309]
+collision_priority = 3.97
+mass = 0.024
+physics_material_override = SubResource("PhysicsMaterial_puck")
 continuous_cd = true
+script = ExtResource("1_puck")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=354474530]
 shape = SubResource("CylinderShape3D_puck")
+debug_color = Color(0.6288816, 0.5043976, 0.4463238, 0.41960785)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=585975900]
 mesh = SubResource("CylinderMesh_puck")
 surface_material_override/0 = SubResource("StandardMaterial3D_puck")

@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://c32r65kwfs60j"]
 
-[ext_resource type="PackedScene" uid="uid://dcdmpd67cdr0o" path="res://models/Rink.glb" id="3_st4qh"]
-[ext_resource type="PackedScene" path="res://scenes/puck/puck.tscn" id="5_puck"]
+[ext_resource type="PackedScene" uid="uid://ml3m12o4ciqa" path="res://models/rink.tscn" id="5_oj4i3"]
+[ext_resource type="PackedScene" uid="uid://c3h1lg0q66rqi" path="res://scenes/puck/puck.tscn" id="5_puck"]
 [ext_resource type="Script" uid="uid://bkwqgor3irhdu" path="res://scripts/game_manager.gd" id="6_gm"]
 [ext_resource type="Script" uid="uid://binf4xmn1yhp8" path="res://scripts/ui/pause_menu.gd" id="7_pm"]
 [ext_resource type="Script" uid="uid://n7jmrypljkpe" path="res://scripts/goal_detector.gd" id="8_goal"]
@@ -17,6 +17,10 @@ tonemap_white = 6.0
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_da6vm"]
 margin = 0.0
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_floor"]
+friction = 0.8
+rough = true
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_goal"]
 size = Vector3(0.1883789, 0.1, 0.53565675)
@@ -34,9 +38,6 @@ shadow_enabled = true
 shadow_blur = 2.0
 directional_shadow_max_distance = 5.0
 
-[node name="Rink" parent="." unique_id=1832758005 instance=ExtResource("3_st4qh")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
-
 [node name="GameManager" type="Node3D" parent="." unique_id=1360180026]
 script = ExtResource("6_gm")
 
@@ -45,6 +46,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
 
 [node name="Floor" type="StaticBody3D" parent="." unique_id=1008671758]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.007, 0)
+physics_material_override = SubResource("PhysicsMaterial_floor")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Floor" unique_id=739274559]
 shape = SubResource("WorldBoundaryShape3D_da6vm")
@@ -70,3 +72,5 @@ script = ExtResource("8_goal")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="GoalRight" unique_id=445538747]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.37432373, 0, -0.0014831796)
 shape = SubResource("BoxShape3D_goal")
+
+[node name="Rink" parent="." unique_id=1810026249 instance=ExtResource("5_oj4i3")]

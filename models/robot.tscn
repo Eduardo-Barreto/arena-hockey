@@ -2,6 +2,9 @@
 
 [ext_resource type="Script" uid="uid://dhi8q5pvd7p27" path="res://scripts/robot.gd" id="1_ue1vh"]
 
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_ue1vh"]
+friction = 0.2
+
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_d1hmq"]
 resource_name = "mat_0"
 cull_mode = 2
@@ -250,16 +253,10 @@ points = PackedVector3Array(-0.14, 0.055, 0, -0.01006227, 0.037870523, 0, -0.01,
 [sub_resource type="BoxShape3D" id="BoxShape3D_puck_detector"]
 size = Vector3(0.17831054, 0.05, 0.14770019)
 
-[sub_resource type="BoxMesh" id="BoxMesh_puck_debug"]
-size = Vector3(0.14, 0.05, 0.12)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_puck_debug"]
-transparency = 1
-no_depth_test = true
-albedo_color = Color(0, 1, 0, 0.3)
-
 [node name="Robot" type="RigidBody3D" unique_id=1284975059]
+transform = Transform3D(1, 0, 0, 0, 0.99999994, 0, 0, 0, 0.99999994, 0, 0.019259796, 0)
 mass = 0.454
+physics_material_override = SubResource("PhysicsMaterial_ue1vh")
 center_of_mass_mode = 1
 center_of_mass = Vector3(0, 0, 0.02)
 continuous_cd = true
@@ -268,7 +265,7 @@ angular_damp = 5.0
 script = ExtResource("1_ue1vh")
 
 [node name="Chassis" type="MeshInstance3D" parent="." unique_id=1368484400]
-transform = Transform3D(1, 0, 0, 0, -4.3711385e-08, -0.99999994, 0, 0.99999994, -4.3711385e-08, 0, 0, 0)
+transform = Transform3D(1, 0, 0, 0, -4.3711392e-08, -1.0000001, 0, 1.0000001, -4.3711392e-08, 0, 0, 0)
 mesh = SubResource("ArrayMesh_ogdt1")
 
 [node name="RightMotor" type="MeshInstance3D" parent="." unique_id=895428799]
@@ -323,9 +320,3 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.06)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PuckDetector" unique_id=1846908963]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.004682623, 0, -0.023103025)
 shape = SubResource("BoxShape3D_puck_detector")
-
-[node name="DebugMesh" type="MeshInstance3D" parent="PuckDetector" unique_id=1283450621]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.028804287)
-visible = false
-mesh = SubResource("BoxMesh_puck_debug")
-surface_material_override/0 = SubResource("StandardMaterial3D_puck_debug")
